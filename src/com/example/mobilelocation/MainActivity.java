@@ -13,15 +13,15 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	private TextView tvLocation;
+	private LocationManager lm;
+	private MyLocationListener listener;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		tvLocation = (TextView) findViewById(R.id.tv_location);
-		//获取系统定位服务
-		LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-		//List<String> allProviders = lm.getAllProviders();//获得所以位置提供者
-		MyLocationListener listener = new MyLocationListener();
+		lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+		listener = new MyLocationListener();
 		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60, 50, listener);//位置提供者  最短更新时间    最短更新距离
 		
 	}
@@ -52,6 +52,11 @@ public class MainActivity extends Activity {
 			//关闭GPS时
 		}
 		
+	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		lm.removeUpdates(listener);//当activity销毁时   停止更新坐标
 	}
 	
 }
